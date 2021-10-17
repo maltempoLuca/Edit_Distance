@@ -1,0 +1,26 @@
+EditDistance considerato di successo se la parola cercata risulta quella con distanza minore. 
+
+Test edit distance su 100 parole, Jaccard Treshold = 0.2, dizionario con: 95193 parole 
+HitRate ngram2 = 0.65
+HitRate ngram3 = 0.56
+HitRate ngram4 = 0.39
+Tempo edit distance ngram2 = 1.52
+Tempo edit distance ngram3 = 0.43
+Tempo edit distance ngram4 = 0.31
+
+Test edit distance su 100 parole, Jaccard Treshold = 0.4, dizionario con: 95193 parole 
+HitRate ngram2 = 0.55
+HitRate ngram3 = 0.34
+HitRate ngram4 = 0.24
+Tempo edit distance ngram2 = 0.39
+Tempo edit distance ngram3 = 0.33
+Tempo edit distance ngram4 = 0.28
+
+Test edit distance su 100 parole, Jaccard Treshold = 0.8, dizionario con: 95193 parole 
+HitRate ngram2 = 0.06
+HitRate ngram3 = 0.02
+HitRate ngram4 = 0.02
+Tempo edit distance ngram2 = 0.37
+Tempo edit distance ngram3 = 0.32
+Tempo edit distance ngram4 = 0.28
+
