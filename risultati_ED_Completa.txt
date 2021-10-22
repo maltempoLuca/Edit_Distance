@@ -1,6 +1,0 @@
-EditDistance considerato di successo se la parola cercata risulta quella con distanza minore. 
-
-Test edit distance di 100 parole, dizionario con: 95193 parole 
-HitRate = 0.67
-Tempo edit distance = 84.49
-

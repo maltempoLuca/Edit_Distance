@@ -1,28 +1,23 @@
-def buildDictionaries(dizionari, pathDizionari):
-    maxLength = 0
-    i = 0
-    while i < len(dizionari):
-        with open(pathDizionari[i], encoding="utf8", errors='ignore') as fip:
-            for word in fip:
-                dizionari[i].append(word.rstrip())
-                if len(word) > maxLength:
-                    maxLength = len(word)
-        i = i + 1
-    return maxLength
+def buildDictionary(dictionary, pathDizionari):
+    with open(pathDizionari, encoding="utf8", errors='ignore') as fip:
+        for word in fip:
+            dictionary.append(word.rstrip())
 
 
 def nGram(word, n):
-    nGrams = []
+    wordnGrams = []
     if word is not None:
         for i in range(len(word) - n + 1):  # RANGE va da 0 a n ESCLUSO
-            nGrams.append(word[i:i + n])
-    return nGrams
+            wordnGrams.append(word[i:i + n])
+    return wordnGrams
 
 
-def buildGramDictionaries(dizionari, dizionariGram):
-    for j in range(len(dizionari)):
-        for word in dizionari[j]:
-            i = 0
-            while i < len(dizionariGram[j]):
-                dizionariGram[j][i].update({word: nGram(word, i + 2)})
-                i = i + 1
+def buildGramDictionaries(dictionary, gramDictionaries, nGrams):
+    for i in range(len(nGrams)):
+        gramDictionaries.append({})
+
+    for word in dictionary:
+        i = 0
+        while i < len(gramDictionaries):
+            gramDictionaries[i].update({word: nGram(word, nGrams[i])})
+            i = i + 1

@@ -1,7 +1,0 @@
-EditDistance eseguita solo se la differenza tra la lunghezza delle due parole è minore di 1.
-EditDistance considerato di successo se la parola cercata risulta quella con distanza minore. 
-
-Test edit distance di 100 parole, dizionario con: 95193 parole 
-HitRate = 0.36
-Tempo edit distance = 23.43
-

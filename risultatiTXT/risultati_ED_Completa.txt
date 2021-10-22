@@ -1,0 +1,22 @@
+EditDistance considerato di successo se la parola cercata risulta tra quelle con distanza minore. 
+
+Test edit distance di 100 parole, ogni parola ha 1 carattere modificati, dizionario con: 95193 parole 
+HitRate = 0.99
+Tempo edit distance = 86
+
+Test edit distance di 100 parole, ogni parola ha 2 carattere modificati, dizionario con: 95193 parole 
+HitRate = 0.94
+Tempo edit distance = 89
+
+Test edit distance di 100 parole, ogni parola ha 3 carattere modificati, dizionario con: 95193 parole 
+HitRate = 0.82
+Tempo edit distance = 86
+
+Test edit distance di 100 parole, ogni parola ha 4 carattere modificati, dizionario con: 95193 parole 
+HitRate = 0.67
+Tempo edit distance = 85
+
+Test edit distance di 100 parole, ogni parola ha 5 carattere modificati, dizionario con: 95193 parole 
+HitRate = 0.57
+Tempo edit distance = 91
+

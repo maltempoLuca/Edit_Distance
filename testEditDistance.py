@@ -1,6 +1,6 @@
-import math
 import random
 import editDistance
+import matplotlib.pyplot as plt
 
 
 def modifyCharacter(originalWordAsList, randomPosition):
@@ -36,183 +36,188 @@ def modifyCharacter(originalWordAsList, randomPosition):
     return originalWordAsList
 
 
-def randomWordsForTest(dizionarioParole, numTestingWords):
+def randomWordsForTest(dizionarioParole, numTestingWords, nCharacterToBeModified):
     wordsTest = []
     twistedWordsTest = []
+    # scegli parole
     for i in range(numTestingWords):
         rndWord = random.choice(dizionarioParole)
         while len(rndWord) == 1:
             rndWord = random.choice(dizionarioParole)
         wordsTest.append(rndWord)
-    for i in range(len(wordsTest)):
-        numOfChanges = random.randint(1, math.floor(len(wordsTest[i]) / 2))
-        originalWord = wordsTest[i]
-        originalWordAsList = list(originalWord)
-        for i in range(numOfChanges):
-            possiblePositions = [i for i in range(len(originalWordAsList))]
-            randomPosition = random.choice(possiblePositions)
-            while possiblePositions[randomPosition] == '#':
-                randomPosition = random.choice(possiblePositions)
-            possiblePositions[randomPosition] = '#'
-            originalWordAsList = modifyCharacter(originalWordAsList, randomPosition)
-        twistedWord = "".join(originalWordAsList)
-        twistedWordsTest.append(twistedWord)
-    randomWords = [wordsTest, twistedWordsTest]
-    return randomWords
+    # modifica parole
+    for i in range(len(nCharacterToBeModified)):
+        tmpTwistedWordsTest = []
+        numOfChanges = nCharacterToBeModified[i]
+        for j in range(len(wordsTest)):
+            originalWord = wordsTest[j]
+            originalWordAsList = list(originalWord)
+            for k in range(numOfChanges):
+                if len(originalWordAsList) > k:
+                    possiblePositions = [t for t in range(len(originalWordAsList))]
+                    randomPosition = random.choice(possiblePositions)
+                    while possiblePositions[randomPosition] == '#':
+                        randomPosition = random.choice(possiblePositions)
+                    possiblePositions[randomPosition] = '#'
+                    originalWordAsList = modifyCharacter(originalWordAsList, randomPosition)
+            twistedWord = "".join(originalWordAsList)
+            tmpTwistedWordsTest.append(twistedWord)
+        twistedWordsTest.append(tmpTwistedWordsTest)
+    return wordsTest, twistedWordsTest
 
 
-def testWords_nGram(risultati, wordsTest, twistedWordsTest, jaccardTreshold, tempi, gramDictionaries, tableOfCosts,
-                    maxLengthWord):
+def testWords_nGram(wordsTest, twistedWordsTest, jaccardTreshold, tempi, nGrams, gramDictionaries, tableOfCosts):
+    risultati = []
     for i in range(len(wordsTest)):
         wrongWord = twistedWordsTest[i]
-        orderedSW = editDistance.editDistanceNGram(wrongWord, gramDictionaries, jaccardTreshold, tempi,
-                                                   tableOfCosts, maxLengthWord)  # solo ordered SW
-        for y in range(len(risultati)):
-            risultatiParola = []
-            tmpSW = orderedSW.copy()
-            tmpSW = editDistance.returnNSimilarWords(tmpSW, y + 1)
-            for j in range(len(tmpSW)):
-                found = 'no'
-                for k in range(len(tmpSW[j])):
-                    if wordsTest[i] == tmpSW[j][k][0]:
-                        found = 'yes'
-                risultatiParola.append(found)
-            risultati[y].append(risultatiParola)
+        similarWords = editDistance.editDistanceNGram(wrongWord, nGrams, gramDictionaries, jaccardTreshold, tempi,
+                                                      tableOfCosts)  # solo ordered SW
+        risultatiParola = []
+        for j in range(len(similarWords)):
+            found = 'no'
+            for k in range(len(similarWords[j])):
+                if wordsTest[i] == similarWords[j][k][0]:
+                    found = 'yes'
+            risultatiParola.append(found)
+        risultati.append(risultatiParola)
     return risultati
 
 
-def testEditDistance_nGram(filesOfResult, dizionari, randomWords, numTestingWord, jaccardTresholds, gramDictionarie,
-                           tableOfCosts, maxLengthWord):  # gramDictionarie contiene i dizionari gram
+def testEditDistance_nGram(resultFile, dizionari, nGrams, randomWords, jaccardTresholds, gramDictionarie,
+                           tableOfCosts, nCharacterToBeModified):
+    numTestingWord = len(randomWords[0])
+    str00 = 'EditDistance considerato di successo se la parola cercata risulta tra quelle con distanza minore. \n\n'
+    File_object = open(resultFile, "w")
+    File_object.write(str00)
+    File_object.close()
 
-    for z in range(len(filesOfResult)):
-        if z == 0:
-            str00 = 'EditDistance considerato di successo se la parola cercata risulta quella con distanza minore. \n\n'
-        else:
-            str00 = 'EditDistance considerato di successo se la parola cercata è presente tra le PRIME ' + str(
-                z + 1) + ' parole con distanza minore. \n\n'
-        File_object = open(filesOfResult[z], "w")
-        File_object.write(str00)
+    # Per Plot Grafico
+    ngramHitRate = []
+    for nGramterator in range(len(gramDictionarie)):
+        ngramHitRate.append([])
+        for jIterator in range(len(jaccardTresholds)):
+            ngramHitRate[nGramterator].append([])
 
-    for dizionarioIterator in range(len(dizionari)):
+    # Test Edit Distance nGram
+    for n in range(len(nCharacterToBeModified)):  # n == numero di caratteri da cambiare per parola
         for j in range(len(jaccardTresholds)):
-            str0 = "Test edit distance su " + str(numTestingWord) + " parole, Jaccard Treshold = " + str(
-                jaccardTresholds[j]) + ", dizionario con: " + str(len(dizionari[dizionarioIterator])) + " parole \n"
+            str0 = "Test edit distance su " + str(numTestingWord) + " parole, ogni parola ha " + str(
+                nCharacterToBeModified[n]) + " caratteri modificati, Jaccard Treshold = " + str(
+                jaccardTresholds[j]) + ", dizionario con: " + str(len(dizionari)) + " parole \n"
             tempi = []
-            risultati = []
-            for y in range(len(filesOfResult)):
-                risultati.append([])
-            risultati = testWords_nGram(risultati, randomWords[dizionarioIterator][0],
-                                        randomWords[dizionarioIterator][1], jaccardTresholds[j], tempi,
-                                        gramDictionarie[dizionarioIterator], tableOfCosts, maxLengthWord)
+            risultati = testWords_nGram(randomWords[0], randomWords[1][n], jaccardTresholds[j], tempi, nGrams,
+                                        gramDictionarie, tableOfCosts)
 
-            for t in range(len(filesOfResult)):
+            risNGRAM = []
+            timeNGRAM = []
+            for nGramIterator in range(len(nGrams)):
+                risNGRAM.append(0)
+                timeNGRAM.append(0)
 
-                risNGRAM2, risNGRAM3, risNGRAM4 = 0, 0, 0
-                timeNGRAM2, timeNGRAM3, timeNGRAM4 = 0, 0, 0
-                for k in range(len(risultati[t])):
-                    if risultati[t][k][0] == 'yes':
-                        risNGRAM2 = risNGRAM2 + 1
-                    if risultati[t][k][1] == 'yes':
-                        risNGRAM3 = risNGRAM3 + 1
-                    if risultati[t][k][2] == 'yes':
-                        risNGRAM4 = risNGRAM4 + 1
+            for k in range(len(risultati)):  # per ogni parola
+                for nGramIterator in range(len(nGrams)):
+                    if risultati[k][nGramIterator] == 'yes':
+                        risNGRAM[nGramIterator] = risNGRAM[nGramIterator] + 1
+                    timeNGRAM[nGramIterator] = timeNGRAM[nGramIterator] + tempi[k][nGramIterator]
 
-                    timeNGRAM2 = timeNGRAM2 + tempi[k][0]
-                    timeNGRAM3 = timeNGRAM3 + tempi[k][1]
-                    timeNGRAM4 = timeNGRAM4 + tempi[k][2]
+            list_HitRateResult = []
+            list_TimeResult = []
+            for nGramIterator in range(len(nGrams)):
+                hitRateNgram = risNGRAM[nGramIterator] / numTestingWord
+                str1 = 'HitRate ngram' + str(nGrams[nGramIterator]) + ' = ' + str("{:.2f}".format(hitRateNgram)) + "\n"
+                str2 = 'Tempo edit distance ngram' + str(nGrams[nGramIterator]) + ' = ' + str(
+                    "{:.2f}".format(timeNGRAM[nGramIterator] / numTestingWord)) + "\n"
+                list_HitRateResult.append(str1)
+                list_TimeResult.append(str2)
+                ngramHitRate[nGramIterator][j].append(hitRateNgram)  # Per PLOT Grafico
 
-                str1 = 'HitRate ngram2 = ' + str("{:.2f}".format(risNGRAM2 / numTestingWord)) + "\n"
-                str2 = 'HitRate ngram3 = ' + str("{:.2f}".format(risNGRAM3 / numTestingWord)) + "\n"
-                str3 = 'HitRate ngram4 = ' + str("{:.2f}".format(risNGRAM4 / numTestingWord)) + "\n"
-                str4 = 'Tempo edit distance ngram2 = ' + str("{:.2f}".format(timeNGRAM2 / numTestingWord)) + "\n"
-                str5 = 'Tempo edit distance ngram3 = ' + str("{:.2f}".format(timeNGRAM3 / numTestingWord)) + "\n"
-                str6 = 'Tempo edit distance ngram4 = ' + str("{:.2f}".format(timeNGRAM4 / numTestingWord)) + "\n\n"
+            strList = [str0] + list_HitRateResult + list_TimeResult + ['\n']
+            File_object = open(resultFile, "a")
+            File_object.writelines(strList)
+            File_object.close()
 
-                strList = [str0, str1, str2, str3, str4, str5, str6]
-                File_object = open(filesOfResult[t], "a")
-                File_object.writelines(strList)
-                File_object.close()
+    draw_nGramPlot(ngramHitRate, nCharacterToBeModified)
 
 
-def testWords_Completa(risultati, wordsTest, twistedWordsTest, dizionarioParole, tempi, tableOfCosts, maxLengthWord):
+def draw_nGramPlot(ngramHitRate, nCharacterToBeModified):
+    strPath = "risultatiGrafici/"
+    zero = [0]
+    uno = [1]
+    for nGramIt in range(len(ngramHitRate)):
+        plt.clf()
+        plt.cla()
+        plt.plot(zero + nCharacterToBeModified, uno + (ngramHitRate[nGramIt][0]))
+        plt.plot(zero + nCharacterToBeModified, uno + (ngramHitRate[nGramIt][1]))
+        plt.plot(zero + nCharacterToBeModified, uno + (ngramHitRate[nGramIt][2]))
+        plt.legend(["j=0.2", "j=0.4", "j=0.8"])  # , bbox_to_anchor=(1.05, 0.6)
+        str000 = 'HitRate al variare del numero di caratteri con nGram = ' + str(nGramIt + 2)
+        plt.title(str000)
+        plt.xticks(zero + nCharacterToBeModified)
+        plt.yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+        plt.xlabel("Numero di caratteri modificati")
+        plt.ylabel("HitRate")
+        plt.grid()
+        plt.savefig(strPath + 'plotHitRate_nGram' + str(nGramIt + 2))
+
+
+def testWords_Completa(risultati, wordsTest, twistedWordsTest, dizionarioParole, tempi, tableOfCosts):
     for i in range(len(wordsTest)):
         wrongWord = twistedWordsTest[i]
-        sW = editDistance.editDistanceCompleta(wrongWord, dizionarioParole, tempi, tableOfCosts,
-                                               maxLengthWord)  # solo ordered SW
-        tmpSW = sW.copy()
-        tmpSW = editDistance.returnNSimilarWords(tmpSW, 1)
-        for j in range(len(tmpSW)):
-            found = 'no'
-            for k in range(len(tmpSW[j])):
-                if wordsTest[i] == tmpSW[j][k][0]:
-                    found = 'yes'
+        similarWords = editDistance.editDistanceCompleta(wrongWord, dizionarioParole, tempi,
+                                                         tableOfCosts)  # solo ordered SW
+        found = 'no'
+        for j in range(len(similarWords)):
+            if wordsTest[i] == similarWords[j][0]:
+                found = 'yes'
         risultati.append(found)
     return risultati
 
 
-def testEditDistance_Completa(fileOfResult, dizionarioParole, randomWords, numTestingWord, tableOfCosts, maxLengthWord):
-    str00 = 'EditDistance considerato di successo se la parola cercata risulta quella con distanza minore. \n\n'
+def testEditDistance_Completa(fileOfResult, dictionary, randomWords, tableOfCosts, nCharacterToBeModified):
+    numTestingWord = len(randomWords[0])
+    str00 = 'EditDistance considerato di successo se la parola cercata risulta tra quelle con distanza minore. \n\n'
     File_object = open(fileOfResult, "w")
     File_object.write(str00)
-    for i in range(len(dizionarioParole)):
-        str0 = "Test edit distance di " + str(numTestingWord) + " parole, dizionario con: " + str(
-            len(dizionarioParole[i])) + " parole \n"
+    nHitRate = []
+    for n in range(len(nCharacterToBeModified)):
+        str0 = "Test edit distance di " + str(numTestingWord) + " parole, ogni parola ha " + str(
+            nCharacterToBeModified[n]) + " carattere modificati, dizionario con: " + str(
+            len(dictionary)) + " parole \n"
         tempi = []
         risultati = []
-        risultati = testWords_Completa(risultati, randomWords[i][0], randomWords[i][1], dizionarioParole[i], tempi,
-                                       tableOfCosts, maxLengthWord)
+        risultati = testWords_Completa(risultati, randomWords[0], randomWords[1][n], dictionary, tempi,
+                                       tableOfCosts)
         result = 0
         time = 0
         for k in range(len(risultati)):
             if risultati[k] == 'yes':
                 result = result + 1
             time = time + tempi[k]
-        str1 = 'HitRate = ' + str("{:.2f}".format(result / numTestingWord)) + "\n"
-        str2 = 'Tempo edit distance = ' + str("{:.2f}".format(time / numTestingWord)) + "\n\n"
+        hitRate = result / numTestingWord
+        time = time / numTestingWord
+        nHitRate.append(hitRate)
+        str1 = 'HitRate = ' + str("{:.2f}".format(hitRate)) + "\n"
+        str2 = 'Tempo edit distance = ' + str("{:.0f}".format(time)) + "\n\n"
         strList = [str0, str1, str2]
         File_object = open(fileOfResult, "a")
         File_object.writelines(strList)
         File_object.close()
 
-
-def testWords_N(risultati, wordsTest, twistedWordsTest, dizionarioParole, tempi, tableOfCosts, maxLengthWord, N):
-    for i in range(len(wordsTest)):
-        wrongWord = twistedWordsTest[i]
-        orderedSW = editDistance.editDistanceN(wrongWord, dizionarioParole, tempi, tableOfCosts, maxLengthWord,
-                                               N)  # solo ordered SW
-        tmpSW = orderedSW.copy()
-        tmpSW = editDistance.returnNSimilarWords(tmpSW, 1)
-        for j in range(len(tmpSW)):
-            found = 'no'
-            for k in range(len(tmpSW[j])):
-                if wordsTest[i] == tmpSW[j][k][0]:
-                    found = 'yes'
-        risultati.append(found)
-    return risultati
+    draw_nPlot(nCharacterToBeModified, nHitRate)
 
 
-def testEditDistance_N(fileOfResult, dizionarioParole, randomWords, numTestingWord, tableOfCosts, maxLengthWord, N):
-    str000 = 'EditDistance eseguita solo se la differenza tra la lunghezza delle due parole è minore di ' + str(
-        N) + '.\n'
-    str00 = 'EditDistance considerato di successo se la parola cercata risulta quella con distanza minore. \n\n'
-    File_object = open(fileOfResult, "w")
-    File_object.writelines([str000, str00])
-    for i in range(len(dizionarioParole)):
-        str0 = "Test edit distance di " + str(numTestingWord) + " parole, dizionario con: " + str(
-            len(dizionarioParole[i])) + " parole \n"
-        tempi = []
-        risultati = []
-        risultati = testWords_N(risultati, randomWords[i][0], randomWords[i][1], dizionarioParole[i], tempi,
-                                tableOfCosts, maxLengthWord, N)
-        result = 0
-        time = 0
-        for k in range(len(risultati)):
-            if risultati[k] == 'yes':
-                result = result + 1
-            time = time + tempi[k]
-        str1 = 'HitRate = ' + str("{:.2f}".format(result / numTestingWord)) + "\n"
-        str2 = 'Tempo edit distance = ' + str("{:.2f}".format(time / numTestingWord)) + "\n\n"
-        strList = [str0, str1, str2]
-        File_object = open(fileOfResult, "a")
-        File_object.writelines(strList)
-        File_object.close()
+def draw_nPlot(nCharacterToBeModified, nHitRate):
+    strPath = "risultatiGrafici/"
+    zero = [0]
+    uno = [1]
+    plt.clf()
+    plt.cla()
+    plt.plot(zero + nCharacterToBeModified, uno + nHitRate)
+    str000 = 'HitRate al variare del numero di caratteri, Edit distance completa.'
+    plt.title(str000)
+    plt.xticks(zero + nCharacterToBeModified)
+    plt.yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    plt.xlabel("Numero di caratteri modificati")
+    plt.ylabel("HitRate")
+    plt.grid()
+    plt.savefig(strPath + 'plotHitRate_ED_Completa')

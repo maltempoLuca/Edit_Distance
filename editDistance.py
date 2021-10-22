@@ -1,4 +1,4 @@
-import time
+import timeit as time
 import numpy as np
 import buildDictionaries
 
@@ -30,85 +30,49 @@ def editDistance(str1, str2, tableOfCosts):
     return c[m, n]
 
 
-def editDistanceN(str1, dizionario, tempi, tableOfCosts, maxLengthWord, N):
-    similarWords = []  # è solo un container per uniformare le funzioni per la ricerca di parole vicine.
+def editDistanceCompleta(str1, dizionario, tempi, tableOfCosts):
     sw = []
-    startTime = time.time()
-    lun = len(str1)
-    numSimilarWords = 0
-    for word in dizionario:
-        if abs(lun - len(word)) <= N:
-            d = editDistance(str1, word, tableOfCosts)
-            if d <= 2:
-                sw.append((word, d))
-                numSimilarWords = numSimilarWords + 1
-    endTime = time.time()
-    tempi.append(endTime - startTime)
-    similarWords.append(sw)
-    return orderedSimilarWords(similarWords, maxLengthWord)
-
-
-def editDistanceCompleta(str1, dizionario, tempi, tableOfCosts, maxLengthWord):
-    similarWords = []  # è solo un container per uniformare le funzioni per la ricerca di parole vicine.
-    sw = []
-    startTime = time.time()
+    startTime = time.default_timer()
+    minDistance = np.inf
     for word in dizionario:
         d = editDistance(str1, word, tableOfCosts)
-        sw.append((word, d))
-    endTime = time.time()
+        if d < minDistance:
+            minDistance = d
+            sw.clear()
+            sw.append((word, d))
+        elif d == minDistance:
+            sw.append((word, d))
+    endTime = time.default_timer()
     tempi.append(endTime - startTime)
-    similarWords.append(sw)
-    return orderedSimilarWords(similarWords, maxLengthWord)
+    return sw
 
 
-def editDistanceNGram(parola, gramDictionaries, jaccardTreshold, tempi, tableOfCosts, maxLengthWord):
+def editDistanceNGram(parola, nGrams, gramDictionaries, jaccardTreshold, tempi, tableOfCosts):
     similarWords = []
     timeGram = []
-    minDistance = 26
     i = 0
     while i < len(gramDictionaries):
-        parolaGram = buildDictionaries.nGram(parola, i + 2)
-        startTime = time.time()
+        startTime = time.default_timer()
+        minDistance = np.inf
+        parolaGram = buildDictionaries.nGram(parola, nGrams[i])
         sw = []
         for word in gramDictionaries[i].keys():
             wordGram = gramDictionaries[i][word]
             jac = jaccard(parolaGram, wordGram)
             if jac >= jaccardTreshold:
                 d = editDistance(parola, word, tableOfCosts)
-                if d <= minDistance:
+                if d < minDistance:
+                    minDistance = d
+                    sw.clear()
                     sw.append((word, d))
-        endTime = time.time()
+                elif d == minDistance:
+                    sw.append((word, d))
+        endTime = time.default_timer()
         timeGram.append(endTime - startTime)
         similarWords.append(sw)
         i = i + 1
     tempi.append(timeGram)
-    return orderedSimilarWords(similarWords, maxLengthWord)
-
-
-def orderedSimilarWords(similarWords, k):
-    i = 0
-    while i < len(similarWords):
-        sw = similarWords[i]
-        swOrdered = countingSort(sw, k)
-        similarWords[i] = swOrdered
-        i = i + 1
     return similarWords
-
-
-def returnNSimilarWords(sW, N):
-    i = 0
-    similarWords = []
-    while i < len(sW):
-        tmp = []
-        if len(sW[i]) != 0:
-            j = 0
-            while j < N and j < len(sW[i]):
-                tmp.append(sW[i][j])
-                j = j + 1
-        similarWords.append(tmp)
-        i = i + 1
-    sW = similarWords
-    return sW
 
 
 def jaccard(strGram1, strGram2):
@@ -118,20 +82,3 @@ def jaccard(strGram1, strGram2):
         return 0
     else:
         return float(len(num) / len(den))
-
-
-def countingSort(a, k):
-    size = len(a)
-    b = [('', 0)] * size
-    c = [0 for i in range(k + 1)]
-
-    for j in range(0, size):
-        c[a[j][1]] = c[a[j][1]] + 1
-    for i in range(1, k + 1):
-        c[i] = c[i] + c[i - 1]
-    j = size - 1
-    while j >= 0:
-        b[c[a[j][1]] - 1] = (a[j][0], a[j][1])
-        c[a[j][1]] = c[a[j][1]] - 1
-        j = j - 1
-    return b

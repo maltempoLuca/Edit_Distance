@@ -1,0 +1,122 @@
+EditDistance considerato di successo se la parola cercata risulta tra quelle con distanza minore. 
+
+Test edit distance su 100 parole, ogni parola ha 1 caratteri modificati, Jaccard Treshold = 0.2, dizionario con: 95193 parole 
+HitRate ngram2 = 0.99
+HitRate ngram3 = 0.98
+HitRate ngram4 = 0.92
+Tempo edit distance ngram2 = 2.60
+Tempo edit distance ngram3 = 0.64
+Tempo edit distance ngram4 = 0.40
+
+Test edit distance su 100 parole, ogni parola ha 1 caratteri modificati, Jaccard Treshold = 0.4, dizionario con: 95193 parole 
+HitRate ngram2 = 0.97
+HitRate ngram3 = 0.91
+HitRate ngram4 = 0.67
+Tempo edit distance ngram2 = 0.48
+Tempo edit distance ngram3 = 0.37
+Tempo edit distance ngram4 = 0.32
+
+Test edit distance su 100 parole, ogni parola ha 1 caratteri modificati, Jaccard Treshold = 0.8, dizionario con: 95193 parole 
+HitRate ngram2 = 0.28
+HitRate ngram3 = 0.13
+HitRate ngram4 = 0.08
+Tempo edit distance ngram2 = 0.41
+Tempo edit distance ngram3 = 0.37
+Tempo edit distance ngram4 = 0.30
+
+Test edit distance su 100 parole, ogni parola ha 2 caratteri modificati, Jaccard Treshold = 0.2, dizionario con: 95193 parole 
+HitRate ngram2 = 0.93
+HitRate ngram3 = 0.83
+HitRate ngram4 = 0.54
+Tempo edit distance ngram2 = 1.82
+Tempo edit distance ngram3 = 0.52
+Tempo edit distance ngram4 = 0.36
+
+Test edit distance su 100 parole, ogni parola ha 2 caratteri modificati, Jaccard Treshold = 0.4, dizionario con: 95193 parole 
+HitRate ngram2 = 0.82
+HitRate ngram3 = 0.33
+HitRate ngram4 = 0.18
+Tempo edit distance ngram2 = 0.45
+Tempo edit distance ngram3 = 0.38
+Tempo edit distance ngram4 = 0.33
+
+Test edit distance su 100 parole, ogni parola ha 2 caratteri modificati, Jaccard Treshold = 0.8, dizionario con: 95193 parole 
+HitRate ngram2 = 0.04
+HitRate ngram3 = 0.04
+HitRate ngram4 = 0.04
+Tempo edit distance ngram2 = 0.43
+Tempo edit distance ngram3 = 0.37
+Tempo edit distance ngram4 = 0.32
+
+Test edit distance su 100 parole, ogni parola ha 3 caratteri modificati, Jaccard Treshold = 0.2, dizionario con: 95193 parole 
+HitRate ngram2 = 0.78
+HitRate ngram3 = 0.55
+HitRate ngram4 = 0.34
+Tempo edit distance ngram2 = 1.68
+Tempo edit distance ngram3 = 0.45
+Tempo edit distance ngram4 = 0.33
+
+Test edit distance su 100 parole, ogni parola ha 3 caratteri modificati, Jaccard Treshold = 0.4, dizionario con: 95193 parole 
+HitRate ngram2 = 0.54
+HitRate ngram3 = 0.19
+HitRate ngram4 = 0.08
+Tempo edit distance ngram2 = 0.45
+Tempo edit distance ngram3 = 0.37
+Tempo edit distance ngram4 = 0.31
+
+Test edit distance su 100 parole, ogni parola ha 3 caratteri modificati, Jaccard Treshold = 0.8, dizionario con: 95193 parole 
+HitRate ngram2 = 0.02
+HitRate ngram3 = 0.00
+HitRate ngram4 = 0.00
+Tempo edit distance ngram2 = 0.42
+Tempo edit distance ngram3 = 0.37
+Tempo edit distance ngram4 = 0.32
+
+Test edit distance su 100 parole, ogni parola ha 4 caratteri modificati, Jaccard Treshold = 0.2, dizionario con: 95193 parole 
+HitRate ngram2 = 0.61
+HitRate ngram3 = 0.34
+HitRate ngram4 = 0.16
+Tempo edit distance ngram2 = 1.26
+Tempo edit distance ngram3 = 0.43
+Tempo edit distance ngram4 = 0.32
+
+Test edit distance su 100 parole, ogni parola ha 4 caratteri modificati, Jaccard Treshold = 0.4, dizionario con: 95193 parole 
+HitRate ngram2 = 0.28
+HitRate ngram3 = 0.03
+HitRate ngram4 = 0.00
+Tempo edit distance ngram2 = 0.48
+Tempo edit distance ngram3 = 0.40
+Tempo edit distance ngram4 = 0.34
+
+Test edit distance su 100 parole, ogni parola ha 4 caratteri modificati, Jaccard Treshold = 0.8, dizionario con: 95193 parole 
+HitRate ngram2 = 0.00
+HitRate ngram3 = 0.00
+HitRate ngram4 = 0.00
+Tempo edit distance ngram2 = 0.44
+Tempo edit distance ngram3 = 0.38
+Tempo edit distance ngram4 = 0.32
+
+Test edit distance su 100 parole, ogni parola ha 5 caratteri modificati, Jaccard Treshold = 0.2, dizionario con: 95193 parole 
+HitRate ngram2 = 0.49
+HitRate ngram3 = 0.18
+HitRate ngram4 = 0.06
+Tempo edit distance ngram2 = 1.07
+Tempo edit distance ngram3 = 0.43
+Tempo edit distance ngram4 = 0.32
+
+Test edit distance su 100 parole, ogni parola ha 5 caratteri modificati, Jaccard Treshold = 0.4, dizionario con: 95193 parole 
+HitRate ngram2 = 0.14
+HitRate ngram3 = 0.02
+HitRate ngram4 = 0.00
+Tempo edit distance ngram2 = 0.41
+Tempo edit distance ngram3 = 0.35
+Tempo edit distance ngram4 = 0.30
+
+Test edit distance su 100 parole, ogni parola ha 5 caratteri modificati, Jaccard Treshold = 0.8, dizionario con: 95193 parole 
+HitRate ngram2 = 0.00
+HitRate ngram3 = 0.00
+HitRate ngram4 = 0.00
+Tempo edit distance ngram2 = 0.41
+Tempo edit distance ngram3 = 0.35
+Tempo edit distance ngram4 = 0.30
+
