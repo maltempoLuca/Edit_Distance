@@ -7,7 +7,7 @@ def buildDictionary(dictionary, pathDizionari):
 def nGram(word, n):
     wordnGrams = []
     if word is not None:
-        for i in range(len(word) - n + 1):  # RANGE va da 0 a n ESCLUSO
+        for i in range(len(word) - n + 1):
             wordnGrams.append(word[i:i + n])
     return wordnGrams
 

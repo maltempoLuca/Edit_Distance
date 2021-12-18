@@ -66,25 +66,23 @@ def randomWordsForTest(dizionarioParole, numTestingWords, nCharacterToBeModified
     return wordsTest, twistedWordsTest
 
 
-def testWords_nGram(wordsTest, twistedWordsTest, jaccardTreshold, tempi, nGrams, gramDictionaries, tableOfCosts):
+def testWords_nGram(wordsTest, twistedWordsTest, jaccardTreshold, tempi, nGrams, gramDictionaries):
     risultati = []
     for i in range(len(wordsTest)):
         wrongWord = twistedWordsTest[i]
-        similarWords = editDistance.editDistanceNGram(wrongWord, nGrams, gramDictionaries, jaccardTreshold, tempi,
-                                                      tableOfCosts)  # solo ordered SW
+        similarWords = editDistance.editDistanceNGram(wrongWord, nGrams, gramDictionaries, jaccardTreshold, tempi)
         risultatiParola = []
-        for j in range(len(similarWords)):
+        for ngrams in range(len(similarWords)):
             found = 'no'
-            for k in range(len(similarWords[j])):
-                if wordsTest[i] == similarWords[j][k][0]:
+            for k in range(len(similarWords[ngrams])):
+                if wordsTest[i] == similarWords[ngrams][k]:  # similarWords[ngram][lista di parole vicine]
                     found = 'yes'
             risultatiParola.append(found)
         risultati.append(risultatiParola)
     return risultati
 
 
-def testEditDistance_nGram(resultFile, dizionari, nGrams, randomWords, jaccardTresholds, gramDictionarie,
-                           tableOfCosts, nCharacterToBeModified):
+def testEditDistance_nGram(resultFile, dizionari, nGrams, randomWords, jaccardTresholds, gramDictionarie, nCharacterToBeModified):
     numTestingWord = len(randomWords[0])
     str00 = 'EditDistance considerato di successo se la parola cercata risulta tra quelle con distanza minore. \n\n'
     File_object = open(resultFile, "w")
@@ -99,14 +97,14 @@ def testEditDistance_nGram(resultFile, dizionari, nGrams, randomWords, jaccardTr
             ngramHitRate[nGramterator].append([])
 
     # Test Edit Distance nGram
-    for n in range(len(nCharacterToBeModified)):  # n == numero di caratteri da cambiare per parola
+    for n in range(len(nCharacterToBeModified)):
         for j in range(len(jaccardTresholds)):
             str0 = "Test edit distance su " + str(numTestingWord) + " parole, ogni parola ha " + str(
                 nCharacterToBeModified[n]) + " caratteri modificati, Jaccard Treshold = " + str(
                 jaccardTresholds[j]) + ", dizionario con: " + str(len(dizionari)) + " parole \n"
             tempi = []
             risultati = testWords_nGram(randomWords[0], randomWords[1][n], jaccardTresholds[j], tempi, nGrams,
-                                        gramDictionarie, tableOfCosts)
+                                        gramDictionarie)
 
             risNGRAM = []
             timeNGRAM = []
@@ -160,20 +158,19 @@ def draw_nGramPlot(ngramHitRate, nCharacterToBeModified):
         plt.savefig(strPath + 'plotHitRate_nGram' + str(nGramIt + 2))
 
 
-def testWords_Completa(risultati, wordsTest, twistedWordsTest, dizionarioParole, tempi, tableOfCosts):
+def testWords_Completa(risultati, wordsTest, twistedWordsTest, dizionarioParole, tempi):
     for i in range(len(wordsTest)):
         wrongWord = twistedWordsTest[i]
-        similarWords = editDistance.editDistanceCompleta(wrongWord, dizionarioParole, tempi,
-                                                         tableOfCosts)  # solo ordered SW
+        similarWords = editDistance.editDistanceCompleta(wrongWord, dizionarioParole, tempi)
         found = 'no'
         for j in range(len(similarWords)):
-            if wordsTest[i] == similarWords[j][0]:
+            if wordsTest[i] == similarWords[j]:  # similarWords[parola]
                 found = 'yes'
         risultati.append(found)
     return risultati
 
 
-def testEditDistance_Completa(fileOfResult, dictionary, randomWords, tableOfCosts, nCharacterToBeModified):
+def testEditDistance_Completa(fileOfResult, dictionary, randomWords, nCharacterToBeModified):
     numTestingWord = len(randomWords[0])
     str00 = 'EditDistance considerato di successo se la parola cercata risulta tra quelle con distanza minore. \n\n'
     File_object = open(fileOfResult, "w")
@@ -185,8 +182,7 @@ def testEditDistance_Completa(fileOfResult, dictionary, randomWords, tableOfCost
             len(dictionary)) + " parole \n"
         tempi = []
         risultati = []
-        risultati = testWords_Completa(risultati, randomWords[0], randomWords[1][n], dictionary, tempi,
-                                       tableOfCosts)
+        risultati = testWords_Completa(risultati, randomWords[0], randomWords[1][n], dictionary, tempi)
         result = 0
         time = 0
         for k in range(len(risultati)):
