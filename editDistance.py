@@ -9,8 +9,8 @@ tableOfOperation = {'Null': 0, 'Copy': 1, 'Replace': 2, 'Swap': 3, 'Delete': 4, 
 def editDistance(str1, str2):
     m = len(str1)
     n = len(str2)
-    c = np.zeros((m + 1, n + 1), dtype=np.int16)
-    op = np.zeros((m + 1, n + 1), dtype=np.int16)
+    c = np.zeros((m + 1, n + 1))
+    op = np.zeros((m + 1, n + 1))
 
     for i in range(m + 1):
         c[i, 0] = i * tableOfCosts['Delete']
